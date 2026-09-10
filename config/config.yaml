@@ -14,17 +14,15 @@ simulation:
 
 # ------------------------------------------------------------------
 # Vehicle dynamics limits and behaviour.
-# These bounds are used both to generate realistic signals AND later
-# (Phase 3) to decide what counts as "out of range" for tampering.
 # ------------------------------------------------------------------
 vehicle:
   speed_kmh:
     min: 0.0
     max: 160.0
-  acceleration_ms2:          # longitudinal acceleration
-    min: -4.0                # hard braking
-    max: 3.0                 # strong acceleration
-  steering_deg:              # steering wheel angle
+  acceleration_ms2:
+    min: -4.0
+    max: 3.0
+  steering_deg:
     min: -180.0
     max: 180.0
   brake_percent:
@@ -35,27 +33,158 @@ vehicle:
 # Battery / BMS behaviour
 # ------------------------------------------------------------------
 battery:
-  soc_percent:               # state of charge
+  soc_percent:
     start: 85.0
     min: 5.0
     max: 100.0
   temperature_c:
     ambient: 25.0
     max_safe: 55.0
-  nominal_voltage_v: 400.0   # typical EV traction pack voltage
-  max_current_a: 250.0       # discharge/charge current magnitude
+  nominal_voltage_v: 400.0
+  max_current_a: 250.0
 
 # ------------------------------------------------------------------
-# Charging station / grid behaviour (used fully in Phase 8)
+# Charging station / grid behaviour
 # ------------------------------------------------------------------
 charging:
-  station_power_kw: 50.0     # DC fast-charger nominal power
+  station_power_kw: 50.0
   grid_frequency_hz:
-    nominal: 50.0            # 50 Hz grid (use 60.0 for US-style)
-    tolerance: 0.2           # normal +/- deviation
+    nominal: 50.0
+    tolerance: 0.2
+
+# ------------------------------------------------------------------
+# CAN bus model (Phase 2).
+#
+# Each entry defines one periodic CAN message:
+#   arbitration_id : CAN ID as an integer (shown as hex in comments)
+#   name           : human-readable message name
+#   ecu            : which simulated ECU sends it
+#   asset          : logical asset (links to TARA in Phase 6)
+#   cycle_ms       : how often the message is sent (milliseconds)
+#   signals        : list of physical signals packed into the payload,
+#                    each with the byte range, scale and offset used to
+#                    encode the float value into integer bytes.
+#
+# Encoding rule (see can_codec.py):
+#   raw_int = round((value - offset) / scale)
+#   raw_int is little-endian packed into bytes[start:start+length]
+# ------------------------------------------------------------------
+can:
+  jitter_fraction: 0.03      # +/- timing noise on each cycle (3%)
+  messages:
+    - arbitration_id: 0x0C0   # 192
+      name: "PWT_Speed"
+      ecu: "PowertrainECU"
+      asset: "Powertrain ECU"
+      cycle_ms: 20
+      signals:
+        - name: "speed_kmh"
+          start: 0
+          length: 2
+          scale: 0.01
+          offset: 0.0
+        - name: "acceleration_ms2"
+          start: 2
+          length: 2
+          scale: 0.001
+          offset: -10.0
+
+    - arbitration_id: 0x0D0   # 208
+      name: "CHS_Steering"
+      ecu: "ChassisECU"
+      asset: "Steering/ADAS ECU"
+      cycle_ms: 20
+      signals:
+        - name: "steering_deg"
+          start: 0
+          length: 2
+          scale: 0.01
+          offset: -360.0
+        - name: "brake_percent"
+          start: 2
+          length: 2
+          scale: 0.01
+          offset: 0.0
+
+    - arbitration_id: 0x1A0   # 416
+      name: "BMS_State"
+      ecu: "BatteryECU"
+      asset: "Battery Management (BMS)"
+      cycle_ms: 100
+      signals:
+        - name: "battery_soc"
+          start: 0
+          length: 2
+          scale: 0.01
+          offset: 0.0
+        - name: "battery_temp_c"
+          start: 2
+          length: 2
+          scale: 0.01
+          offset: -40.0
+        - name: "pack_voltage_v"
+          start: 4
+          length: 2
+          scale: 0.1
+          offset: 0.0
+
+    - arbitration_id: 0x1B0   # 432
+      name: "BMS_Current"
+      ecu: "BatteryECU"
+      asset: "Battery Management (BMS)"
+      cycle_ms: 100
+      signals:
+        - name: "pack_current_a"
+          start: 0
+          length: 2
+          scale: 0.01
+          offset: -300.0
+
+    - arbitration_id: 0x2A0   # 672
+      name: "CHG_Status"
+      ecu: "ChargingECU"
+      asset: "Charging Controller"
+      cycle_ms: 200
+      signals:
+        - name: "charging_state"
+          start: 0
+          length: 1
+          scale: 1.0
+          offset: 0.0
+        - name: "grid_frequency_hz"
+          start: 1
+          length: 2
+          scale: 0.01
+          offset: 0.0
+
+# ------------------------------------------------------------------
+# Logical assets (used by TARA engine in Phase 6). Defined here so the
+# CAN messages above can reference them by name.
+# ------------------------------------------------------------------
+assets:
+  - name: "Powertrain ECU"
+    type: "Control ECU"
+    cia: "Integrity"
+    criticality: "High"
+  - name: "Steering/ADAS ECU"
+    type: "Control ECU"
+    cia: "Integrity"
+    criticality: "High"
+  - name: "Battery Management (BMS)"
+    type: "Energy ECU"
+    cia: "Integrity/Availability"
+    criticality: "High"
+  - name: "Charging Controller"
+    type: "Energy ECU"
+    cia: "Integrity/Availability"
+    criticality: "High"
+  - name: "CAN Bus"
+    type: "Network"
+    cia: "Availability/Integrity"
+    criticality: "High"
 
 # ------------------------------------------------------------------
 # Logging
 # ------------------------------------------------------------------
 logging:
-  level: "INFO"              # DEBUG, INFO, WARNING, ERROR
+  level: "INFO"
