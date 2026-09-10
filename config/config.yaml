@@ -1,0 +1,61 @@
+# ==================================================================
+# Global configuration for the AEV IDS & TARA project.
+# All phases read from this file so behaviour stays consistent.
+# ==================================================================
+
+# ------------------------------------------------------------------
+# Simulation-wide settings
+# ------------------------------------------------------------------
+simulation:
+  random_seed: 42          # master seed for reproducibility
+  sample_rate_hz: 20       # how many signal samples per simulated second
+  duration_seconds: 120    # total length of one generated drive session
+  output_dir: "data"       # where generated datasets are written
+
+# ------------------------------------------------------------------
+# Vehicle dynamics limits and behaviour.
+# These bounds are used both to generate realistic signals AND later
+# (Phase 3) to decide what counts as "out of range" for tampering.
+# ------------------------------------------------------------------
+vehicle:
+  speed_kmh:
+    min: 0.0
+    max: 160.0
+  acceleration_ms2:          # longitudinal acceleration
+    min: -4.0                # hard braking
+    max: 3.0                 # strong acceleration
+  steering_deg:              # steering wheel angle
+    min: -180.0
+    max: 180.0
+  brake_percent:
+    min: 0.0
+    max: 100.0
+
+# ------------------------------------------------------------------
+# Battery / BMS behaviour
+# ------------------------------------------------------------------
+battery:
+  soc_percent:               # state of charge
+    start: 85.0
+    min: 5.0
+    max: 100.0
+  temperature_c:
+    ambient: 25.0
+    max_safe: 55.0
+  nominal_voltage_v: 400.0   # typical EV traction pack voltage
+  max_current_a: 250.0       # discharge/charge current magnitude
+
+# ------------------------------------------------------------------
+# Charging station / grid behaviour (used fully in Phase 8)
+# ------------------------------------------------------------------
+charging:
+  station_power_kw: 50.0     # DC fast-charger nominal power
+  grid_frequency_hz:
+    nominal: 50.0            # 50 Hz grid (use 60.0 for US-style)
+    tolerance: 0.2           # normal +/- deviation
+
+# ------------------------------------------------------------------
+# Logging
+# ------------------------------------------------------------------
+logging:
+  level: "INFO"              # DEBUG, INFO, WARNING, ERROR

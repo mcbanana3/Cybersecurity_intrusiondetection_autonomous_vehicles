@@ -1,0 +1,35 @@
+# ------------------------------------------------------------------
+# AI-Based IDS & TARA for Autonomous EV Systems - dependencies
+# Lower-bound pins only, so pip installs prebuilt wheels for the
+# installed Python version (tested with Python 3.13). No C compiler
+# is required.
+# ------------------------------------------------------------------
+
+# Core data / compute (used from Phase 1)
+numpy>=2.1
+pandas>=2.2
+scipy>=1.13
+PyYAML>=6.0
+
+# Machine learning (Phase 5)
+scikit-learn>=1.4
+xgboost>=2.1
+imbalanced-learn>=0.12
+
+# Explainability (Phase 11)
+shap>=0.45
+
+# Cryptography / security (Phase 7)
+cryptography>=42.0
+
+# Visualization (Phase 11)
+matplotlib>=3.8
+seaborn>=0.13
+
+# Dashboard (Phase 9)
+streamlit>=1.30
+plotly>=5.18
+
+# Utilities / testing (used from Phase 1)
+joblib>=1.3
+pytest>=7.4
