@@ -1,20 +1,13 @@
 # ==================================================================
 # Global configuration for the AEV IDS & TARA project.
-# All phases read from this file so behaviour stays consistent.
 # ==================================================================
 
-# ------------------------------------------------------------------
-# Simulation-wide settings
-# ------------------------------------------------------------------
 simulation:
   random_seed: 42
   sample_rate_hz: 20
   duration_seconds: 120
   output_dir: "data"
 
-# ------------------------------------------------------------------
-# Vehicle dynamics limits and behaviour.
-# ------------------------------------------------------------------
 vehicle:
   speed_kmh:
     min: 0.0
@@ -29,9 +22,6 @@ vehicle:
     min: 0.0
     max: 100.0
 
-# ------------------------------------------------------------------
-# Battery / BMS behaviour
-# ------------------------------------------------------------------
 battery:
   soc_percent:
     start: 85.0
@@ -43,18 +33,12 @@ battery:
   nominal_voltage_v: 400.0
   max_current_a: 250.0
 
-# ------------------------------------------------------------------
-# Charging station / grid behaviour
-# ------------------------------------------------------------------
 charging:
   station_power_kw: 50.0
   grid_frequency_hz:
     nominal: 50.0
     tolerance: 0.2
 
-# ------------------------------------------------------------------
-# CAN bus model (Phase 2).
-# ------------------------------------------------------------------
 can:
   jitter_fraction: 0.03
   messages:
@@ -143,9 +127,6 @@ can:
           scale: 0.01
           offset: 0.0
 
-# ------------------------------------------------------------------
-# Logical assets (used by TARA engine in Phase 6).
-# ------------------------------------------------------------------
 assets:
   - name: "Powertrain ECU"
     type: "Control ECU"
@@ -168,61 +149,69 @@ assets:
     cia: "Availability/Integrity"
     criticality: "High"
 
-# ------------------------------------------------------------------
-# Attack engine configuration (Phase 3).
-#
-# Each attack has a time window [start_s, end_s] during which it acts,
-# plus attack-specific parameters. All attacks are SIMULATED against our
-# own synthetic CAN trace only.
-# ------------------------------------------------------------------
 attacks:
   spoofing:
     enabled: true
-    target_message: "PWT_Speed"     # inject fake speed frames
+    target_message: "PWT_Speed"
     start_s: 20.0
     end_s: 30.0
-    inject_rate_ms: 10.0            # how often a spoofed frame is added
-    forged_speed_kmh: 200.0         # implausible fake speed
+    inject_rate_ms: 10.0
+    forged_speed_kmh: 200.0
 
   replay:
     enabled: true
     target_message: "CHS_Steering"
-    capture_start_s: 5.0            # window of frames to capture
+    capture_start_s: 5.0
     capture_end_s: 8.0
-    replay_start_s: 45.0            # when to re-inject them
+    replay_start_s: 45.0
     end_s: 50.0
 
   dos:
     enabled: true
     start_s: 60.0
     end_s: 65.0
-    flood_id: 0x000                 # highest priority ID
-    flood_rate_ms: 1.0              # extremely high frame rate
+    flood_id: 0x000
+    flood_rate_ms: 1.0
 
   injection:
     enabled: true
     start_s: 75.0
     end_s: 80.0
-    rogue_id: 0x666                 # ID not present in normal traffic
+    rogue_id: 0x666
     inject_rate_ms: 15.0
 
   tampering:
     enabled: true
-    target_message: "BMS_State"     # corrupt battery data
+    target_message: "BMS_State"
     start_s: 90.0
     end_s: 95.0
-    fraction: 0.5                   # fraction of frames in window to corrupt
+    fraction: 0.5
 
   charging_attack:
     enabled: true
     target_message: "CHG_Status"
     start_s: 105.0
     end_s: 115.0
-    false_grid_freq_hz: 47.0        # dangerously low grid frequency
-    oscillation_hz: 2.0             # grid frequency oscillation amplitude
+    false_grid_freq_hz: 47.0
+    oscillation_hz: 2.0
 
 # ------------------------------------------------------------------
-# Logging
+# Feature engineering / dataset pipeline (Phase 4).
+#
+#   window_ms  : length of each sliding window in milliseconds
+#   stride_ms  : how far the window advances each step (overlap if < window)
+#   split      : fractions for time-aware train/val/test split
+#   known_ids  : arbitration IDs considered legitimate (auto-derived from
+#                the can.messages above at runtime; listed here only for
+#                reference / override).
 # ------------------------------------------------------------------
+features:
+  window_ms: 500
+  stride_ms: 250
+  split:
+    train: 0.6
+    val: 0.2
+    test: 0.2
+
 logging:
   level: "INFO"
