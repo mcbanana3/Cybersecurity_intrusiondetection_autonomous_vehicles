@@ -1,0 +1,323 @@
+{
+  "class_names": [
+    "normal",
+    "charging_attack",
+    "dos",
+    "injection",
+    "replay",
+    "spoofing",
+    "tampering"
+  ],
+  "feature_names": [
+    "frame_count",
+    "iat_mean",
+    "iat_std",
+    "iat_min",
+    "frame_rate_hz",
+    "unique_id_count",
+    "unknown_id_count",
+    "min_id",
+    "top_id_fraction",
+    "payload_mean",
+    "payload_std",
+    "payload_entropy",
+    "PWT_Speed_speed_kmh_max",
+    "PWT_Speed_speed_kmh_min",
+    "PWT_Speed_speed_kmh_range",
+    "BMS_State_battery_soc_max",
+    "BMS_State_battery_soc_min",
+    "BMS_State_battery_soc_range",
+    "BMS_State_pack_voltage_v_max",
+    "BMS_State_pack_voltage_v_min",
+    "BMS_State_pack_voltage_v_range",
+    "BMS_State_battery_temp_c_max",
+    "BMS_State_battery_temp_c_min",
+    "BMS_State_battery_temp_c_range",
+    "CHG_Status_grid_frequency_hz_max",
+    "CHG_Status_grid_frequency_hz_min",
+    "CHG_Status_grid_frequency_hz_range",
+    "CHG_Status_charging_state_max",
+    "CHG_Status_charging_state_min",
+    "CHG_Status_charging_state_range"
+  ],
+  "binary": {
+    "val": {
+      "accuracy": 1.0,
+      "precision_macro": 1.0,
+      "recall_macro": 1.0,
+      "f1_macro": 1.0,
+      "f1_weighted": 1.0,
+      "confusion_matrix": [
+        [
+          63,
+          0
+        ],
+        [
+          0,
+          33
+        ]
+      ],
+      "labels": [
+        0,
+        1
+      ],
+      "class_names": [
+        "normal",
+        "attack"
+      ]
+    },
+    "test": {
+      "accuracy": 0.9895833333333334,
+      "precision_macro": 0.9921875,
+      "recall_macro": 0.9848484848484849,
+      "f1_macro": 0.9883706844336766,
+      "f1_weighted": 0.9895442156268928,
+      "confusion_matrix": [
+        [
+          63,
+          0
+        ],
+        [
+          1,
+          32
+        ]
+      ],
+      "labels": [
+        0,
+        1
+      ],
+      "class_names": [
+        "normal",
+        "attack"
+      ]
+    }
+  },
+  "multiclass": {
+    "val": {
+      "accuracy": 0.9895833333333334,
+      "precision_macro": 0.9977678571428571,
+      "recall_macro": 0.9714285714285714,
+      "f1_macro": 0.9830021247344083,
+      "f1_weighted": 0.9890456401283173,
+      "confusion_matrix": [
+        [
+          63,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          4,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          8,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "labels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "class_names": [
+        "normal",
+        "charging_attack",
+        "dos",
+        "injection",
+        "replay",
+        "spoofing",
+        "tampering"
+      ]
+    },
+    "test": {
+      "accuracy": 0.9791666666666666,
+      "precision_macro": 0.9691964285714285,
+      "recall_macro": 0.9428571428571428,
+      "f1_macro": 0.9472878390201226,
+      "f1_weighted": 0.9771822142023914,
+      "confusion_matrix": [
+        [
+          63,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          8,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          3,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          4,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          4,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          8,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4
+        ]
+      ],
+      "labels": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "class_names": [
+        "normal",
+        "charging_attack",
+        "dos",
+        "injection",
+        "replay",
+        "spoofing",
+        "tampering"
+      ]
+    },
+    "test_per_class_f1": {
+      "normal": 0.9921259842519685,
+      "charging_attack": 1.0,
+      "dos": 0.75,
+      "injection": 1.0,
+      "replay": 0.8888888888888888,
+      "spoofing": 1.0,
+      "tampering": 1.0
+    },
+    "trained_classes": [
+      "normal",
+      "charging_attack",
+      "dos",
+      "injection",
+      "replay",
+      "spoofing",
+      "tampering"
+    ]
+  },
+  "anomaly": {
+    "test": {
+      "accuracy": 0.8645833333333334,
+      "precision_macro": 0.854020979020979,
+      "recall_macro": 0.8896103896103896,
+      "f1_macro": 0.8590626764539808,
+      "f1_weighted": 0.86777950310559,
+      "confusion_matrix": [
+        [
+          51,
+          12
+        ],
+        [
+          1,
+          32
+        ]
+      ],
+      "labels": [
+        0,
+        1
+      ],
+      "class_names": [
+        "normal",
+        "anomaly"
+      ]
+    },
+    "note": "Isolation Forest trained on normal windows only; evaluated against the binary attack label as a proxy for unknown-attack detection."
+  }
+}

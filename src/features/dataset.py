@@ -9,9 +9,12 @@ consumed by the Phase 5 IDS:
     * y_multi      : integer-encoded attack-type labels
     * feature_names, class_names
 
-Splitting is TIME-AWARE: windows are ordered by time and cut into
-train / val / test contiguous blocks (no shuffling) so information from
-the future never leaks into training -- important for a credible IDS.
+Splitting: we use a STRATIFIED shuffled split (fixed seed) so that every
+attack class appears in train/val/test in proportion. A purely
+contiguous time split was rejected here because each simulated attack
+occupies a single time block, which would leave some classes entirely
+out of the training split (breaking multi-class training). The original
+time order is preserved in features.csv for later temporal experiments.
 """
 
 from __future__ import annotations
@@ -22,6 +25,7 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 from src.utils.config_loader import load_config
 from src.utils.logger import get_logger
@@ -72,18 +76,11 @@ class DatasetBuilder:
         self.train_frac = float(split["train"])
         self.val_frac = float(split["val"])
         self.test_frac = float(split["test"])
+        self.seed = int(self.config["simulation"]["random_seed"])
 
     def build(self, features: pd.DataFrame) -> Dataset:
-        """Build a Dataset from a feature table.
-
-        Args:
-            features: Output of FeatureExtractor.extract().
-
-        Returns:
-            A populated Dataset with time-aware splits.
-        """
-        # Keep time order for a leakage-free split.
-        features = features.sort_values("start_s").reset_index(drop=True)
+        """Build a Dataset from a feature table using a stratified split."""
+        features = features.reset_index(drop=True)
 
         feature_names = [c for c in features.columns if c not in _NON_FEATURE]
         X = features[feature_names].to_numpy(dtype=np.float32)
@@ -91,28 +88,56 @@ class DatasetBuilder:
 
         yb = features["label_binary"].to_numpy(dtype=np.int64)
 
-        # Encode multi-class labels; ensure 'normal' is index 0 for clarity.
+        # Encode multi-class labels contiguously; 'normal' is index 0.
         class_names = self._ordered_classes(features["label_multi"])
         class_to_idx = {c: i for i, c in enumerate(class_names)}
         ym = features["label_multi"].map(class_to_idx).to_numpy(dtype=np.int64)
 
-        n = len(features)
-        n_train = int(n * self.train_frac)
-        n_val = int(n * self.val_frac)
+        # ---- Stratified split: first split off test, then val from remainder.
+        # Stratify on the multi-class label so every class is represented.
+        strat = ym if self._can_stratify(ym) else None
 
-        idx_train = slice(0, n_train)
-        idx_val = slice(n_train, n_train + n_val)
-        idx_test = slice(n_train + n_val, n)
+        X_tmp, X_test, yb_tmp, yb_test, ym_tmp, ym_test = train_test_split(
+            X, yb, ym,
+            test_size=self.test_frac,
+            random_state=self.seed,
+            stratify=strat,
+        )
+
+        # val fraction relative to the remaining (train+val) portion.
+        val_relative = self.val_frac / (self.train_frac + self.val_frac)
+        strat_tmp = ym_tmp if self._can_stratify(ym_tmp) else None
+
+        X_train, X_val, yb_train, yb_val, ym_train, ym_val = train_test_split(
+            X_tmp, yb_tmp, ym_tmp,
+            test_size=val_relative,
+            random_state=self.seed,
+            stratify=strat_tmp,
+        )
 
         ds = Dataset(
-            X_train=X[idx_train], X_val=X[idx_val], X_test=X[idx_test],
-            yb_train=yb[idx_train], yb_val=yb[idx_val], yb_test=yb[idx_test],
-            ym_train=ym[idx_train], ym_val=ym[idx_val], ym_test=ym[idx_test],
+            X_train=X_train, X_val=X_val, X_test=X_test,
+            yb_train=yb_train, yb_val=yb_val, yb_test=yb_test,
+            ym_train=ym_train, ym_val=ym_val, ym_test=ym_test,
             feature_names=feature_names,
             class_names=class_names,
         )
         logger.info("Dataset built: %s", ds.summary())
+
+        # Report class coverage per split (transparency, not fabricated).
+        for name, arr in [("train", ym_train), ("val", ym_val), ("test", ym_test)]:
+            present = sorted(set(arr.tolist()))
+            logger.info("  %-5s classes present: %s", name,
+                        [class_names[i] for i in present])
         return ds
+
+    @staticmethod
+    def _can_stratify(y: np.ndarray) -> bool:
+        """Stratify only if every class has at least 2 samples."""
+        if len(y) == 0:
+            return False
+        _, counts = np.unique(y, return_counts=True)
+        return bool(counts.min() >= 2)
 
     def _ordered_classes(self, labels: pd.Series) -> List[str]:
         """Return class names with 'normal' first, others sorted."""
@@ -152,14 +177,11 @@ class DatasetBuilder:
 def load_dataset(path: str) -> Dict[str, Any]:
     """Load a saved dataset.npz into a plain dict of arrays/lists.
 
-    Args:
-        path: Path to the .npz file.
-
-    Returns:
-        Dict with X_*/yb_*/ym_* arrays and feature_names/class_names lists.
+    Note: numpy loads string arrays as np.str_; we cast class_names /
+    feature_names to plain Python str so downstream code and logs are clean.
     """
     data = np.load(path, allow_pickle=True)
     out = {k: data[k] for k in data.files}
-    out["feature_names"] = list(out["feature_names"])
-    out["class_names"] = list(out["class_names"])
+    out["feature_names"] = [str(x) for x in out["feature_names"]]
+    out["class_names"] = [str(x) for x in out["class_names"]]
     return out
