@@ -1,0 +1,7 @@
+attack_type,start_s,end_s,target_asset,arbitration_id,id_hex,frames_affected,description
+spoofing,20.0,30.0,Powertrain ECU,192,0x0C0,1000,Injected 1000 spoofed PWT_Speed frames with forged speed=200.0 km/h.
+replay,45.0,50.0,Steering/ADAS ECU,208,0x0D0,251,"Replayed 251 captured CHS_Steering frames (captured 5.0-8.0s, replayed 45.0-50.0s)."
+dos,60.0,65.0,CAN Bus,0,0x000,5001,Flooded bus with 5001 high-priority 0x000 frames at 1.0 ms interval.
+injection,75.0,80.0,CAN Bus,1638,0x666,334,Injected 334 rogue 0x666 frames (ID absent from normal traffic).
+tampering,90.0,95.0,Battery Management (BMS),416,0x1A0,25,Tampered 25 BMS_State frames (corrupted payload bytes -> implausible battery values).
+charging_attack,105.0,115.0,Charging Controller,672,0x2A0,51,"Injected false grid frequency (~47.0 Hz, osc +/-2.0 Hz) into 51 CHG_Status frames."

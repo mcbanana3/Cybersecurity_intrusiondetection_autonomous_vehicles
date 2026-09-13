@@ -1,0 +1,1 @@
+"""Cyberattack simulation subpackage (operates on synthetic data only)."""

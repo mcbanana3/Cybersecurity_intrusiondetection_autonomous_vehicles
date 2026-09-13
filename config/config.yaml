@@ -7,10 +7,10 @@
 # Simulation-wide settings
 # ------------------------------------------------------------------
 simulation:
-  random_seed: 42          # master seed for reproducibility
-  sample_rate_hz: 20       # how many signal samples per simulated second
-  duration_seconds: 120    # total length of one generated drive session
-  output_dir: "data"       # where generated datasets are written
+  random_seed: 42
+  sample_rate_hz: 20
+  duration_seconds: 120
+  output_dir: "data"
 
 # ------------------------------------------------------------------
 # Vehicle dynamics limits and behaviour.
@@ -54,25 +54,11 @@ charging:
 
 # ------------------------------------------------------------------
 # CAN bus model (Phase 2).
-#
-# Each entry defines one periodic CAN message:
-#   arbitration_id : CAN ID as an integer (shown as hex in comments)
-#   name           : human-readable message name
-#   ecu            : which simulated ECU sends it
-#   asset          : logical asset (links to TARA in Phase 6)
-#   cycle_ms       : how often the message is sent (milliseconds)
-#   signals        : list of physical signals packed into the payload,
-#                    each with the byte range, scale and offset used to
-#                    encode the float value into integer bytes.
-#
-# Encoding rule (see can_codec.py):
-#   raw_int = round((value - offset) / scale)
-#   raw_int is little-endian packed into bytes[start:start+length]
 # ------------------------------------------------------------------
 can:
-  jitter_fraction: 0.03      # +/- timing noise on each cycle (3%)
+  jitter_fraction: 0.03
   messages:
-    - arbitration_id: 0x0C0   # 192
+    - arbitration_id: 0x0C0
       name: "PWT_Speed"
       ecu: "PowertrainECU"
       asset: "Powertrain ECU"
@@ -89,7 +75,7 @@ can:
           scale: 0.001
           offset: -10.0
 
-    - arbitration_id: 0x0D0   # 208
+    - arbitration_id: 0x0D0
       name: "CHS_Steering"
       ecu: "ChassisECU"
       asset: "Steering/ADAS ECU"
@@ -106,7 +92,7 @@ can:
           scale: 0.01
           offset: 0.0
 
-    - arbitration_id: 0x1A0   # 416
+    - arbitration_id: 0x1A0
       name: "BMS_State"
       ecu: "BatteryECU"
       asset: "Battery Management (BMS)"
@@ -128,7 +114,7 @@ can:
           scale: 0.1
           offset: 0.0
 
-    - arbitration_id: 0x1B0   # 432
+    - arbitration_id: 0x1B0
       name: "BMS_Current"
       ecu: "BatteryECU"
       asset: "Battery Management (BMS)"
@@ -140,7 +126,7 @@ can:
           scale: 0.01
           offset: -300.0
 
-    - arbitration_id: 0x2A0   # 672
+    - arbitration_id: 0x2A0
       name: "CHG_Status"
       ecu: "ChargingECU"
       asset: "Charging Controller"
@@ -158,8 +144,7 @@ can:
           offset: 0.0
 
 # ------------------------------------------------------------------
-# Logical assets (used by TARA engine in Phase 6). Defined here so the
-# CAN messages above can reference them by name.
+# Logical assets (used by TARA engine in Phase 6).
 # ------------------------------------------------------------------
 assets:
   - name: "Powertrain ECU"
@@ -182,6 +167,59 @@ assets:
     type: "Network"
     cia: "Availability/Integrity"
     criticality: "High"
+
+# ------------------------------------------------------------------
+# Attack engine configuration (Phase 3).
+#
+# Each attack has a time window [start_s, end_s] during which it acts,
+# plus attack-specific parameters. All attacks are SIMULATED against our
+# own synthetic CAN trace only.
+# ------------------------------------------------------------------
+attacks:
+  spoofing:
+    enabled: true
+    target_message: "PWT_Speed"     # inject fake speed frames
+    start_s: 20.0
+    end_s: 30.0
+    inject_rate_ms: 10.0            # how often a spoofed frame is added
+    forged_speed_kmh: 200.0         # implausible fake speed
+
+  replay:
+    enabled: true
+    target_message: "CHS_Steering"
+    capture_start_s: 5.0            # window of frames to capture
+    capture_end_s: 8.0
+    replay_start_s: 45.0            # when to re-inject them
+    end_s: 50.0
+
+  dos:
+    enabled: true
+    start_s: 60.0
+    end_s: 65.0
+    flood_id: 0x000                 # highest priority ID
+    flood_rate_ms: 1.0              # extremely high frame rate
+
+  injection:
+    enabled: true
+    start_s: 75.0
+    end_s: 80.0
+    rogue_id: 0x666                 # ID not present in normal traffic
+    inject_rate_ms: 15.0
+
+  tampering:
+    enabled: true
+    target_message: "BMS_State"     # corrupt battery data
+    start_s: 90.0
+    end_s: 95.0
+    fraction: 0.5                   # fraction of frames in window to corrupt
+
+  charging_attack:
+    enabled: true
+    target_message: "CHG_Status"
+    start_s: 105.0
+    end_s: 115.0
+    false_grid_freq_hz: 47.0        # dangerously low grid frequency
+    oscillation_hz: 2.0             # grid frequency oscillation amplitude
 
 # ------------------------------------------------------------------
 # Logging
