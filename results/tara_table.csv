@@ -1,0 +1,7 @@
+attack_type,detected,asset,asset_criticality,threat_scenario,damage_scenario,aggregated_impact,feasibility,risk_score,risk_level,severity,recommended_action,impact_safety,impact_financial,impact_operational,impact_privacy
+dos,True,CAN Bus,High,Attacker floods the bus with high-priority frames,Loss of CAN message availability,3.4,5,17.0,High,High,Rate-limit/kill flood source; isolate bus segment,4,3,4,1
+spoofing,True,Powertrain ECU,High,Attacker forges speed signal on a legitimate ID,Incorrect speed drives unsafe control decisions,3.85,4,15.4,High,High,Reject forged frames; enforce message authentication (HMAC),5,3,4,1
+injection,True,CAN Bus,High,Attacker injects unauthorized CAN IDs,Rogue messages disrupt ECU behaviour,3.55,4,14.2,High,High,Drop unknown IDs; enforce ID allow-list / IDS filtering,4,3,4,2
+charging_attack,True,Charging Controller,High,False grid/charging data injected during charging,Overcharge risk / charging session and grid disruption,3.1,4,12.4,High,High,Reject false telemetry; secure charging session (encryption),3,4,4,1
+replay,True,Steering/ADAS ECU,High,Attacker replays captured control frames,Stale steering/brake commands re-executed,3.0,4,12.0,Medium,Medium,Reject stale frames; enforce freshness counters/nonces,4,2,3,1
+tampering,True,Battery Management (BMS),High,Attacker corrupts battery telemetry payloads,Implausible SOC/voltage misleads energy management,2.55,3,7.65,Medium,Medium,Reject implausible values; enforce integrity checks (HMAC),3,2,3,1

@@ -1,0 +1,122 @@
+[
+  {
+    "attack_type": "dos",
+    "detected": true,
+    "asset": "CAN Bus",
+    "asset_criticality": "High",
+    "threat_scenario": "Attacker floods the bus with high-priority frames",
+    "damage_scenario": "Loss of CAN message availability",
+    "impact_scores": {
+      "safety": 4,
+      "financial": 3,
+      "operational": 4,
+      "privacy": 1
+    },
+    "aggregated_impact": 3.4,
+    "feasibility": 5,
+    "risk_score": 17.0,
+    "risk_level": "High",
+    "severity": "High",
+    "recommended_action": "Rate-limit/kill flood source; isolate bus segment"
+  },
+  {
+    "attack_type": "spoofing",
+    "detected": true,
+    "asset": "Powertrain ECU",
+    "asset_criticality": "High",
+    "threat_scenario": "Attacker forges speed signal on a legitimate ID",
+    "damage_scenario": "Incorrect speed drives unsafe control decisions",
+    "impact_scores": {
+      "safety": 5,
+      "financial": 3,
+      "operational": 4,
+      "privacy": 1
+    },
+    "aggregated_impact": 3.85,
+    "feasibility": 4,
+    "risk_score": 15.4,
+    "risk_level": "High",
+    "severity": "High",
+    "recommended_action": "Reject forged frames; enforce message authentication (HMAC)"
+  },
+  {
+    "attack_type": "injection",
+    "detected": true,
+    "asset": "CAN Bus",
+    "asset_criticality": "High",
+    "threat_scenario": "Attacker injects unauthorized CAN IDs",
+    "damage_scenario": "Rogue messages disrupt ECU behaviour",
+    "impact_scores": {
+      "safety": 4,
+      "financial": 3,
+      "operational": 4,
+      "privacy": 2
+    },
+    "aggregated_impact": 3.55,
+    "feasibility": 4,
+    "risk_score": 14.2,
+    "risk_level": "High",
+    "severity": "High",
+    "recommended_action": "Drop unknown IDs; enforce ID allow-list / IDS filtering"
+  },
+  {
+    "attack_type": "charging_attack",
+    "detected": true,
+    "asset": "Charging Controller",
+    "asset_criticality": "High",
+    "threat_scenario": "False grid/charging data injected during charging",
+    "damage_scenario": "Overcharge risk / charging session and grid disruption",
+    "impact_scores": {
+      "safety": 3,
+      "financial": 4,
+      "operational": 4,
+      "privacy": 1
+    },
+    "aggregated_impact": 3.1,
+    "feasibility": 4,
+    "risk_score": 12.4,
+    "risk_level": "High",
+    "severity": "High",
+    "recommended_action": "Reject false telemetry; secure charging session (encryption)"
+  },
+  {
+    "attack_type": "replay",
+    "detected": true,
+    "asset": "Steering/ADAS ECU",
+    "asset_criticality": "High",
+    "threat_scenario": "Attacker replays captured control frames",
+    "damage_scenario": "Stale steering/brake commands re-executed",
+    "impact_scores": {
+      "safety": 4,
+      "financial": 2,
+      "operational": 3,
+      "privacy": 1
+    },
+    "aggregated_impact": 3.0,
+    "feasibility": 4,
+    "risk_score": 12.0,
+    "risk_level": "Medium",
+    "severity": "Medium",
+    "recommended_action": "Reject stale frames; enforce freshness counters/nonces"
+  },
+  {
+    "attack_type": "tampering",
+    "detected": true,
+    "asset": "Battery Management (BMS)",
+    "asset_criticality": "High",
+    "threat_scenario": "Attacker corrupts battery telemetry payloads",
+    "damage_scenario": "Implausible SOC/voltage misleads energy management",
+    "impact_scores": {
+      "safety": 3,
+      "financial": 2,
+      "operational": 3,
+      "privacy": 1
+    },
+    "aggregated_impact": 2.55,
+    "feasibility": 3,
+    "risk_score": 7.65,
+    "risk_level": "Medium",
+    "severity": "Medium",
+    "recommended_action": "Reject implausible values; enforce integrity checks (HMAC)"
+  }
+]

@@ -195,16 +195,6 @@ attacks:
     false_grid_freq_hz: 47.0
     oscillation_hz: 2.0
 
-# ------------------------------------------------------------------
-# Feature engineering / dataset pipeline (Phase 4).
-#
-#   window_ms  : length of each sliding window in milliseconds
-#   stride_ms  : how far the window advances each step (overlap if < window)
-#   split      : fractions for time-aware train/val/test split
-#   known_ids  : arbitration IDs considered legitimate (auto-derived from
-#                the can.messages above at runtime; listed here only for
-#                reference / override).
-# ------------------------------------------------------------------
 features:
   window_ms: 500
   stride_ms: 250
@@ -212,6 +202,90 @@ features:
     train: 0.6
     val: 0.2
     test: 0.2
+
+# ------------------------------------------------------------------
+# TARA / risk engine (Phase 6), aligned with ISO/SAE 21434 concepts.
+#
+# For each attack type we define:
+#   threat_scenario  : what the attacker achieves
+#   damage_scenario  : the resulting harm
+#   asset            : the primary affected asset (must match assets above)
+#   impact           : S-F-O-P ratings on a 1..5 ordinal scale
+#                      (Safety, Financial, Operational, Privacy)
+#   base_feasibility : baseline attack feasibility 1..5 (before detection)
+#   recommended_action : the security response to recommend
+#
+# Risk = aggregated_impact * feasibility, mapped to a level via matrix.
+# When the IDS actively detects the attack, feasibility is raised by
+# `detected_feasibility_boost` (observed likelihood increases risk).
+# ------------------------------------------------------------------
+tara:
+  severity_scale:            # ordinal label -> numeric score
+    Negligible: 1
+    Minor: 2
+    Moderate: 3
+    Major: 4
+    Severe: 5
+  impact_weights:            # how S-F-O-P combine into one impact score
+    safety: 0.45
+    financial: 0.15
+    operational: 0.25
+    privacy: 0.15
+  detected_feasibility_boost: 1   # add to feasibility when IDS detects it
+  risk_levels:               # risk-value thresholds -> level label
+    Low: 6
+    Medium: 12
+    High: 18
+    Critical: 25             # anything above High up to 25 = Critical
+
+  threats:
+    spoofing:
+      threat_scenario: "Attacker forges speed signal on a legitimate ID"
+      damage_scenario: "Incorrect speed drives unsafe control decisions"
+      asset: "Powertrain ECU"
+      impact: { safety: Severe, financial: Moderate, operational: Major, privacy: Negligible }
+      base_feasibility: 3
+      recommended_action: "Reject forged frames; enforce message authentication (HMAC)"
+
+    replay:
+      threat_scenario: "Attacker replays captured control frames"
+      damage_scenario: "Stale steering/brake commands re-executed"
+      asset: "Steering/ADAS ECU"
+      impact: { safety: Major, financial: Minor, operational: Moderate, privacy: Negligible }
+      base_feasibility: 3
+      recommended_action: "Reject stale frames; enforce freshness counters/nonces"
+
+    dos:
+      threat_scenario: "Attacker floods the bus with high-priority frames"
+      damage_scenario: "Loss of CAN message availability"
+      asset: "CAN Bus"
+      impact: { safety: Major, financial: Moderate, operational: Major, privacy: Negligible }
+      base_feasibility: 4
+      recommended_action: "Rate-limit/kill flood source; isolate bus segment"
+
+    injection:
+      threat_scenario: "Attacker injects unauthorized CAN IDs"
+      damage_scenario: "Rogue messages disrupt ECU behaviour"
+      asset: "CAN Bus"
+      impact: { safety: Major, financial: Moderate, operational: Major, privacy: Minor }
+      base_feasibility: 3
+      recommended_action: "Drop unknown IDs; enforce ID allow-list / IDS filtering"
+
+    tampering:
+      threat_scenario: "Attacker corrupts battery telemetry payloads"
+      damage_scenario: "Implausible SOC/voltage misleads energy management"
+      asset: "Battery Management (BMS)"
+      impact: { safety: Moderate, financial: Minor, operational: Moderate, privacy: Negligible }
+      base_feasibility: 2
+      recommended_action: "Reject implausible values; enforce integrity checks (HMAC)"
+
+    charging_attack:
+      threat_scenario: "False grid/charging data injected during charging"
+      damage_scenario: "Overcharge risk / charging session and grid disruption"
+      asset: "Charging Controller"
+      impact: { safety: Moderate, financial: Major, operational: Major, privacy: Negligible }
+      base_feasibility: 3
+      recommended_action: "Reject false telemetry; secure charging session (encryption)"
 
 logging:
   level: "INFO"
