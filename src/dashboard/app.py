@@ -1,15 +1,16 @@
 """
-AEV Cybersecurity Dashboard (Streamlit).
+AEV Cybersecurity Control Center (Streamlit).
 
-Visualizes the full pipeline: synthetic AV/EV data -> simulated attacks
--> AI intrusion detection -> affected asset -> TARA risk -> security
-response -> charging/grid monitoring -> ML performance.
+Interactive console over the EXISTING backend (attack engine, IntegratedIDS,
+TARA/risk engine, security modules). This file is UI only -- it calls
+run_pipeline() and IntegratedIDS via src/dashboard/state.py and never
+duplicates or hard-codes detection/risk/security logic.
 
 Run from the project root:
     streamlit run src/dashboard/app.py
 
-NOTE: This is a research/education simulation. All data and attacks are
-synthetic; the system does not provide production-grade security.
+NOTE: research/education simulation. All data and attacks are synthetic;
+this is not production-grade automotive security.
 """
 
 from __future__ import annotations
@@ -26,25 +27,23 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-from src.pipeline import run_pipeline
+from src.dashboard import state as ctl
 from src.tara.risk_engine import RiskEngine
 from src.utils.config_loader import load_config
 
 # ----------------------------------------------------------------------
-st.set_page_config(page_title="AEV Cybersecurity IDS & TARA",
+st.set_page_config(page_title="AEV Cybersecurity Control Center",
                    layout="wide", page_icon="🔐")
 
 RISK_COLORS = {"Low": "#2e7d32", "Medium": "#f9a825",
                "High": "#ef6c00", "Critical": "#c62828"}
-
-
-@st.cache_data(show_spinner="Running simulation pipeline...")
-def _cached_pipeline(overrides_key: str):
-    """Run the pipeline; cache keyed by the attack-toggle signature."""
-    overrides = json.loads(overrides_key)
-    result = run_pipeline(overrides)
-    # Return plain, cacheable structures.
-    return result
+PHASE_BADGE = {
+    ctl.PHASE_NORMAL: ("🟢 NORMAL", "#2e7d32"),
+    ctl.PHASE_UNDER_ATTACK: ("🔴 UNDER ATTACK", "#c62828"),
+    ctl.PHASE_DETECTED: ("🟠 ATTACK DETECTED", "#ef6c00"),
+    ctl.PHASE_TREATED: ("🛡️ TREATMENT APPLIED", "#1565c0"),
+    ctl.PHASE_RECOVERED: ("🟢 RECOVERED", "#2e7d32"),
+}
 
 
 def _load_metrics():
@@ -55,108 +54,136 @@ def _load_metrics():
     return None
 
 
-# ----------------------------------------------------------------------
-# Sidebar: attack controls
-# ----------------------------------------------------------------------
-st.sidebar.title("Attack Simulation Control")
-st.sidebar.caption("Toggle simulated attacks, then re-run the pipeline.")
-
-attack_names = ["spoofing", "replay", "dos", "injection",
-                "tampering", "charging_attack"]
-toggles = {}
-for atk in attack_names:
-    toggles[atk] = st.sidebar.checkbox(atk, value=True)
-
-overrides = {atk: {"enabled": bool(val)} for atk, val in toggles.items()}
-overrides_key = json.dumps(overrides, sort_keys=True)
-
-st.sidebar.markdown("---")
-st.sidebar.info("All attacks are simulated against synthetic data only.")
-
-# Run pipeline (cached).
-result = _cached_pipeline(overrides_key)
+# Initialise interactive state.
+ctl.init_state()
+control = ctl.get_state()
 
 # ----------------------------------------------------------------------
-# Header + global status
+# Header
 # ----------------------------------------------------------------------
-st.title("🔐 AI-Based Intrusion Detection & Threat Risk Assessment")
-st.caption("Autonomous Electric Vehicle Systems — software simulation "
-           "(research/education; not production-grade security).")
-
-n_attack_windows = sum(1 for v in result.verdicts if v.is_attack)
-total_windows = len(result.verdicts)
-
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Windows analysed", total_windows)
-col2.metric("Attack windows detected", n_attack_windows)
-status = "UNDER ATTACK" if n_attack_windows > 0 else "SECURE"
-col3.metric("System status", status)
-col4.metric("Charging samples flagged",
-            f"{result.charging_flagged}/{result.charging_total}")
-
-# Highest current risk across detected windows.
-detected = [v for v in result.verdicts if v.is_attack and v.risk_score]
-if detected:
-    top = max(detected, key=lambda v: v.risk_score)
-    color = RISK_COLORS.get(top.risk_level, "#555")
-    st.markdown(
-        f"<div style='padding:10px;border-radius:8px;background:{color};"
-        f"color:white;font-size:18px'><b>Top threat:</b> "
-        f"{top.attack_type} on {top.affected_asset} — "
-        f"risk {top.risk_score} ({top.risk_level})</div>",
-        unsafe_allow_html=True,
-    )
+label, color = PHASE_BADGE.get(control.phase, ("🟢 NORMAL", "#2e7d32"))
+st.markdown(
+    f"<div style='display:flex;justify-content:space-between;align-items:center'>"
+    f"<h1 style='margin:0'>🔐 AEV CYBERSECURITY CONTROL CENTER</h1>"
+    f"<div style='padding:8px 16px;border-radius:8px;background:{color};"
+    f"color:white;font-size:18px;font-weight:bold'>{label}</div></div>",
+    unsafe_allow_html=True,
+)
+st.caption("Interactive intrusion-detection & risk console for a simulated "
+           "Autonomous EV. All attacks are synthetic (research/education).")
 
 # ----------------------------------------------------------------------
-# Tabs
+# Sidebar: Attack Simulator controls (Step 1)
 # ----------------------------------------------------------------------
-tab_over, tab_can, tab_ai, tab_tara, tab_chg, tab_ml = st.tabs(
-    ["Vehicle Status", "CAN Traffic", "AI Detection",
-     "TARA & Risk", "Charging / Grid", "ML Performance"]
+st.sidebar.title("⚔️ Attack Simulator")
+
+attack_type = st.sidebar.selectbox(
+    "Attack type",
+    ctl.ATTACK_TYPES,
+    format_func=lambda a: ctl.ATTACK_LABELS[a],
 )
 
-# ---- Tab 1: Vehicle status ----
-with tab_over:
-    st.subheader("Synthetic vehicle signals")
-    sig = result.signals
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=sig["timestamp"], y=sig["speed_kmh"],
-                             name="Speed (km/h)"))
-    fig.add_trace(go.Scatter(x=sig["timestamp"], y=sig["battery_soc"],
-                             name="Battery SOC (%)"))
-    fig.add_trace(go.Scatter(x=sig["timestamp"], y=sig["battery_temp_c"],
-                             name="Battery Temp (°C)"))
-    fig.update_layout(height=380, xaxis_title="time (s)",
-                      legend_orientation="h")
-    st.plotly_chart(fig, use_container_width=True)
+# Target selector: default to the attack's natural asset, allow override.
+asset_names = [a["name"] for a in load_config()["assets"]]
+default_target = ctl.ATTACK_TARGETS.get(attack_type, asset_names[0])
+target = st.sidebar.selectbox(
+    "Target asset",
+    asset_names,
+    index=asset_names.index(default_target) if default_target in asset_names else 0,
+)
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("**Charging state over time**")
-        st.area_chart(sig.set_index("timestamp")[["charging_state"]])
-    with c2:
-        st.markdown("**Pack current (+ discharge / − charge)**")
-        st.line_chart(sig.set_index("timestamp")[["pack_current_a"]])
+intensity = st.sidebar.select_slider(
+    "Attack intensity",
+    options=["Low", "Medium", "High"],
+    value="Medium",
+)
 
-# ---- Tab 2: CAN traffic ----
-with tab_can:
-    st.subheader("Simulated CAN traffic")
-    can = result.can_attacked
+st.sidebar.markdown("---")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("**Frames per arbitration ID**")
-        by_id = can.groupby("id_hex").size().reset_index(name="frames")
-        st.plotly_chart(px.bar(by_id, x="id_hex", y="frames", height=340),
-                        use_container_width=True)
-    with c2:
-        st.markdown("**Frame rate over time (attack windows spike)**")
+c1, c2 = st.sidebar.columns(2)
+launch = c1.button("🚀 Launch Attack", use_container_width=True, type="primary")
+treat = c2.button("🛡️ Apply Treatment", use_container_width=True)
+reset = st.sidebar.button("🔄 Reset", use_container_width=True)
+
+if launch:
+    ctl.launch_attack(attack_type, intensity, target)
+if treat:
+    ctl.apply_treatment()
+if reset:
+    ctl.reset_console()
+
+# Refresh local reference after actions.
+control = ctl.get_state()
+
+st.sidebar.markdown("---")
+st.sidebar.info("All attacks are simulated against synthetic data only. "
+                "Not a production security product.")
+
+# ----------------------------------------------------------------------
+# Top status metrics
+# ----------------------------------------------------------------------
+result = st.session_state.pipeline_result
+verdict = control.verdict
+
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Console phase", control.phase.replace("_", " ").title())
+m2.metric("Active attack",
+          ctl.ATTACK_LABELS.get(control.active_attack, "—")
+          if control.active_attack else "—")
+m3.metric("Detected",
+          "YES" if (verdict and verdict.get("is_attack")) else "NO")
+m4.metric("Risk score",
+          verdict.get("risk_score") if verdict and verdict.get("risk_score")
+          else "—")
+
+# ----------------------------------------------------------------------
+# Tabs (existing views preserved; Attack Simulator added)
+# ----------------------------------------------------------------------
+(tab_live, tab_sim, tab_ai, tab_tara, tab_sec,
+ tab_chg, tab_ml) = st.tabs(
+    ["Live Monitor", "Attack Simulator", "AI Detection", "TARA / Risk",
+     "Security", "Charging / Grid", "Model Performance"]
+)
+
+# ---- Live Monitor (placeholder in Step 1; animation added in Step 2) ----
+with tab_live:
+    st.subheader("Live Monitor")
+    st.info("Vehicle animation and live attack visualization arrive in "
+            "Step 2. Current console phase and events are shown below.")
+    if control.events:
+        st.markdown("**Recent events**")
+        for ev in control.events[-8:][::-1]:
+            st.write(f"`{ev['time']}` — {ev['message']}")
+    else:
+        st.write("No events yet. Launch an attack from the sidebar.")
+
+# ---- Attack Simulator (Step 1 core) ----
+with tab_sim:
+    st.subheader("Attack Simulator")
+    st.markdown(
+        f"**Selected:** {ctl.ATTACK_LABELS[attack_type]}  \n"
+        f"**Target:** {target}  \n"
+        f"**Intensity:** {intensity}"
+    )
+    st.caption("Launch runs the real attack engine + pipeline; Apply Treatment "
+               "uses the real security responder; Reset clears state.")
+
+    if result is not None:
+        can = result.can_attacked
+        n_attack = int((can["label"] == "attack").sum())
+        st.markdown("**Effect of the launched attack on the CAN trace**")
+        cc1, cc2, cc3 = st.columns(3)
+        cc1.metric("Total CAN frames", len(can))
+        cc2.metric("Attack frames", n_attack)
+        cc3.metric("Attack windows detected",
+                   sum(1 for v in result.verdicts if v.is_attack))
+
         can = can.copy()
         can["sec"] = can["timestamp"].astype(int)
         rate = can.groupby("sec").size().reset_index(name="frames_per_s")
-        atk_by_sec = (can[can["label"] == "attack"]
-                      .groupby("sec").size().reset_index(name="attack_frames"))
-        merged = rate.merge(atk_by_sec, on="sec", how="left").fillna(0)
+        atk = (can[can["label"] == "attack"].groupby("sec").size()
+               .reset_index(name="attack_frames"))
+        merged = rate.merge(atk, on="sec", how="left").fillna(0)
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=merged["sec"], y=merged["frames_per_s"],
                                  name="all frames/s"))
@@ -164,120 +191,87 @@ with tab_can:
                              name="attack frames/s", marker_color="#c62828"))
         fig.update_layout(height=340, xaxis_title="time (s)")
         st.plotly_chart(fig, use_container_width=True)
+    else:
+        st.write("Launch an attack to see its effect on the simulated system.")
 
-    st.markdown("**Sample frames**")
-    show_cols = ["timestamp", "id_hex", "message_name", "label",
-                 "attack_type"] + [f"b{i}" for i in range(8)]
-    st.dataframe(can[show_cols].head(200), height=260, use_container_width=True)
-
-# ---- Tab 3: AI detection ----
+# ---- AI Detection ----
 with tab_ai:
-    st.subheader("AI intrusion detection (per window)")
-
-    vdf = pd.DataFrame([{
-        "start_s": v.start_s, "end_s": v.end_s, "true_label": v.true_label,
-        "is_attack": v.is_attack, "attack_type": v.attack_type,
-        "confidence": v.confidence, "is_anomaly": v.is_anomaly,
-        "affected_asset": v.affected_asset, "risk_score": v.risk_score,
-        "risk_level": v.risk_level,
-    } for v in result.verdicts])
-
-    # Detection card for the first detected attack.
-    det = [v for v in result.verdicts if v.is_attack]
-    if det:
-        v = det[0]
-        st.markdown("#### Live detection")
+    st.subheader("AI Intrusion Detection")
+    if verdict and verdict.get("is_attack"):
         st.code(
             f"Attack detected  : YES\n"
-            f"Attack type      : {v.attack_type}\n"
-            f"Confidence       : {v.confidence*100:.0f}%\n"
-            f"Affected asset   : {v.affected_asset}\n"
-            f"Severity         : {v.risk_level}\n"
-            f"Risk score       : {v.risk_score}\n"
-            f"Recommended action: {v.recommended_action}",
+            f"Attack type      : {verdict['attack_type']}\n"
+            f"Confidence       : {verdict['confidence']*100:.0f}%\n"
+            f"Affected asset   : {verdict['affected_asset']}\n"
+            f"Detection status : {control.phase}",
             language="text",
         )
+    elif verdict is not None:
+        st.warning("Attack launched but IDS did not flag it in the sampled "
+                   "windows (real model output).")
     else:
-        st.success("No attacks detected in the current run.")
+        st.write("No detection yet. Launch an attack from the sidebar.")
 
-    st.markdown("**Detected attack types (count)**")
-    atk_only = vdf[vdf["is_attack"]]
-    if not atk_only.empty:
-        counts = atk_only["attack_type"].value_counts().reset_index()
-        counts.columns = ["attack_type", "count"]
-        st.plotly_chart(px.bar(counts, x="attack_type", y="count", height=320),
-                        use_container_width=True)
-
-    st.markdown("**All windows**")
-    st.dataframe(vdf, height=320, use_container_width=True)
-
-# ---- Tab 4: TARA & risk ----
+# ---- TARA / Risk ----
 with tab_tara:
     st.subheader("Threat Analysis & Risk Assessment (ISO/SAE 21434-aligned)")
     engine = RiskEngine(load_config())
     table = engine.static_tara_table(detected=True)
-
     tdf = pd.DataFrame([{
         "attack_type": r.attack_type, "asset": r.asset,
         "impact": r.aggregated_impact, "feasibility": r.feasibility,
         "risk_score": r.risk_score, "risk_level": r.risk_level,
         "action": r.recommended_action,
     } for r in table])
+    st.dataframe(tdf, height=280, use_container_width=True)
+    fig = px.bar(tdf, x="risk_score", y="attack_type", orientation="h",
+                 color="risk_level", color_discrete_map=RISK_COLORS, height=300)
+    st.plotly_chart(fig, use_container_width=True)
 
-    c1, c2 = st.columns([1, 1])
-    with c1:
-        st.markdown("**Prioritized risk table**")
-        st.dataframe(tdf, height=300, use_container_width=True)
-    with c2:
-        st.markdown("**Risk score by threat**")
-        fig = px.bar(tdf, x="risk_score", y="attack_type", orientation="h",
-                     color="risk_level", color_discrete_map=RISK_COLORS,
-                     height=300)
-        st.plotly_chart(fig, use_container_width=True)
+# ---- Security ----
+with tab_sec:
+    st.subheader("Security Treatment")
+    if control.treated and verdict:
+        st.success("Treatment applied — threat contained (simulated).")
+        st.code(
+            f"Attack           : {verdict['attack_type']}\n"
+            f"Security control : {verdict.get('security_control')}\n"
+            f"Action           : {verdict.get('recommended_action')}\n"
+            f"Outcome          : malicious message blocked (simulated)",
+            language="text",
+        )
+    elif verdict and verdict.get("is_attack"):
+        st.info("Attack detected. Click 'Apply Treatment' in the sidebar to "
+                "run the existing security control.")
+    else:
+        st.write("No active threat.")
 
-    st.markdown("**Asset × risk heatmap**")
-    heat = tdf.pivot_table(index="asset", columns="attack_type",
-                           values="risk_score", aggfunc="max").fillna(0)
-    st.plotly_chart(px.imshow(heat, text_auto=True, aspect="auto",
-                              color_continuous_scale="Reds", height=320),
-                    use_container_width=True)
-
-# ---- Tab 5: Charging / grid ----
+# ---- Charging / Grid ----
 with tab_chg:
     st.subheader("EV → Charging Station → Grid")
-    cn, ca = result.charging_normal, result.charging_attacked
-
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("**Grid frequency (Hz): normal vs attacked**")
+    if result is not None:
+        cn, ca = result.charging_normal, result.charging_attacked
         fig = go.Figure()
         fig.add_trace(go.Scatter(x=cn["t_s"], y=cn["grid_frequency_hz"],
                                  name="normal"))
         fig.add_trace(go.Scatter(x=ca["t_s"], y=ca["grid_frequency_hz"],
                                  name="attacked", line=dict(color="#c62828")))
         fig.add_hrect(y0=49.0, y1=51.0, fillcolor="green", opacity=0.08,
-                      line_width=0, annotation_text="plausible band")
-        fig.update_layout(height=340, xaxis_title="time (s)")
+                      line_width=0)
+        fig.update_layout(height=340, xaxis_title="time (s)",
+                          title="Grid frequency (Hz)")
         st.plotly_chart(fig, use_container_width=True)
-    with c2:
-        st.markdown("**Charging current (A): normal vs attacked**")
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=cn["t_s"], y=cn["current_a"], name="normal"))
-        fig.add_trace(go.Scatter(x=ca["t_s"], y=ca["current_a"],
-                                 name="attacked", line=dict(color="#c62828")))
-        fig.update_layout(height=340, xaxis_title="time (s)")
-        st.plotly_chart(fig, use_container_width=True)
+        st.metric("Charging samples flagged",
+                  f"{result.charging_flagged}/{result.charging_total}")
+    else:
+        st.write("Launch an attack to populate charging/grid telemetry.")
 
-    st.metric("Charging samples flagged as attack",
-              f"{result.charging_flagged}/{result.charging_total}")
-
-# ---- Tab 6: ML performance ----
+# ---- Model Performance ----
 with tab_ml:
     st.subheader("ML model performance (from trained models)")
     metrics = _load_metrics()
     if metrics is None:
-        st.warning("No metrics found. Run `python run_phase5.py` to train "
-                   "models and generate results/ids_metrics.json.")
+        st.warning("No metrics found. Run `python run_phase5.py` first.")
     else:
         b = metrics["binary"]["test"]
         m = metrics["multiclass"]["test"]
@@ -285,25 +279,12 @@ with tab_ml:
         c1.metric("Binary accuracy", f"{b['accuracy']:.3f}")
         c2.metric("Binary F1 (macro)", f"{b['f1_macro']:.3f}")
         c3.metric("Multi-class accuracy", f"{m['accuracy']:.3f}")
-
-        # Confusion matrix (multi-class).
-        st.markdown("**Multi-class confusion matrix (test)**")
         cm = m["confusion_matrix"]
         names = m.get("class_names", [str(i) for i in m["labels"]])
         fig = px.imshow(cm, x=names, y=names, text_auto=True,
                         color_continuous_scale="Blues",
                         labels=dict(x="Predicted", y="True"), height=420)
         st.plotly_chart(fig, use_container_width=True)
-
-        # Per-class F1.
-        pcf1 = metrics["multiclass"].get("test_per_class_f1", {})
-        if pcf1:
-            st.markdown("**Per-class F1 (test)**")
-            f1df = pd.DataFrame(
-                {"class": list(pcf1.keys()), "f1": list(pcf1.values())})
-            st.plotly_chart(px.bar(f1df, x="class", y="f1", height=320,
-                                   range_y=[0, 1]),
-                            use_container_width=True)
 
 st.markdown("---")
 st.caption("Simulated environment. Attacks are synthetic and for research "
