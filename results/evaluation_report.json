@@ -1,0 +1,88 @@
+{
+  "binary_accuracy": 0.9895833333333334,
+  "binary_f1_macro": 0.9883706844336766,
+  "multiclass_accuracy": 0.9791666666666666,
+  "multiclass_f1_macro": 0.9472878390201226,
+  "roc_auc": 0.9985569985569985,
+  "pr_auc": 0.9974747474747475,
+  "top_shap_features": [
+    [
+      "frame_count",
+      0.0813953856365263
+    ],
+    [
+      "iat_mean",
+      0.07812218490517094
+    ],
+    [
+      "frame_rate_hz",
+      0.06940782497538935
+    ],
+    [
+      "top_id_fraction",
+      0.039371786265655004
+    ],
+    [
+      "CHG_Status_grid_frequency_hz_min",
+      0.03153687247608663
+    ],
+    [
+      "CHG_Status_grid_frequency_hz_max",
+      0.030417191192491536
+    ],
+    [
+      "payload_entropy",
+      0.029984005492798182
+    ],
+    [
+      "CHG_Status_grid_frequency_hz_range",
+      0.028269383163187795
+    ]
+  ],
+  "figures": {
+    "confusion_matrix": "results\\figures\\confusion_matrix.png",
+    "per_class_f1": "results\\figures\\per_class_f1.png",
+    "roc_curve": "results\\figures\\roc_curve.png",
+    "pr_curve": "results\\figures\\pr_curve.png",
+    "normal_vs_attack": "results\\figures\\normal_vs_attack.png",
+    "shap_importance": "results\\figures\\shap_importance.png"
+  },
+  "model_comparison": [
+    {
+      "model": "LogisticRegression",
+      "task": "binary",
+      "accuracy": 1.0,
+      "f1_macro": 1.0
+    },
+    {
+      "model": "DecisionTree",
+      "task": "binary",
+      "accuracy": 0.9896,
+      "f1_macro": 0.9884
+    },
+    {
+      "model": "RandomForest",
+      "task": "binary",
+      "accuracy": 0.9896,
+      "f1_macro": 0.9884
+    },
+    {
+      "model": "XGBoost",
+      "task": "binary",
+      "accuracy": 0.9896,
+      "f1_macro": 0.9884
+    },
+    {
+      "model": "RandomForest",
+      "task": "multiclass",
+      "accuracy": 0.9896,
+      "f1_macro": 0.983
+    },
+    {
+      "model": "XGBoost",
+      "task": "multiclass",
+      "accuracy": 0.9688,
+      "f1_macro": 0.9258
+    }
+  ]
+}

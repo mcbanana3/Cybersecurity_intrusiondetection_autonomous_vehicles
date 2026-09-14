@@ -1,0 +1,107 @@
+{
+  "per_attack": {
+    "spoofing": {
+      "is_attack": true,
+      "attack_type": "spoofing",
+      "confidence": 0.9821,
+      "is_anomaly": true,
+      "affected_asset": "Powertrain ECU",
+      "severity": "High",
+      "risk_score": 15.4,
+      "recommended_action": "Reject forged frames; drop implausible speed values",
+      "security_control": "HMAC message authentication + plausibility check"
+    },
+    "replay": {
+      "is_attack": true,
+      "attack_type": "replay",
+      "confidence": 0.9308,
+      "is_anomaly": true,
+      "affected_asset": "Steering/ADAS ECU",
+      "severity": "Medium",
+      "risk_score": 12.0,
+      "recommended_action": "Reject stale/duplicate counters (freshness enforced)",
+      "security_control": "HMAC + monotonic counter"
+    },
+    "dos": {
+      "is_attack": true,
+      "attack_type": "replay",
+      "confidence": 0.181,
+      "is_anomaly": true,
+      "affected_asset": "Steering/ADAS ECU",
+      "severity": "Medium",
+      "risk_score": 12.0,
+      "recommended_action": "Reject stale/duplicate counters (freshness enforced)",
+      "security_control": "HMAC + monotonic counter"
+    },
+    "injection": {
+      "is_attack": true,
+      "attack_type": "injection",
+      "confidence": 0.9724,
+      "is_anomaly": true,
+      "affected_asset": "CAN Bus",
+      "severity": "High",
+      "risk_score": 14.2,
+      "recommended_action": "Drop frames with unknown/unauthorized arbitration IDs",
+      "security_control": "ID allow-list filtering"
+    },
+    "tampering": {
+      "is_attack": true,
+      "attack_type": "tampering",
+      "confidence": 0.9183,
+      "is_anomaly": true,
+      "affected_asset": "Battery Management (BMS)",
+      "severity": "Medium",
+      "risk_score": 7.65,
+      "recommended_action": "Reject frames failing integrity or range validation",
+      "security_control": "HMAC integrity + plausibility check"
+    },
+    "charging_attack": {
+      "is_attack": true,
+      "attack_type": "charging_attack",
+      "confidence": 0.9191,
+      "is_anomaly": true,
+      "affected_asset": "Charging Controller",
+      "severity": "High",
+      "risk_score": 12.4,
+      "recommended_action": "Reject false grid telemetry; secure charging session",
+      "security_control": "AES-GCM secure session + plausibility check"
+    }
+  },
+  "coverage": {
+    "spoofing": {
+      "windows": 41,
+      "detected": 41,
+      "recall": 1.0
+    },
+    "replay": {
+      "windows": 21,
+      "detected": 21,
+      "recall": 1.0
+    },
+    "dos": {
+      "windows": 22,
+      "detected": 21,
+      "recall": 0.955
+    },
+    "injection": {
+      "windows": 21,
+      "detected": 21,
+      "recall": 1.0
+    },
+    "tampering": {
+      "windows": 21,
+      "detected": 21,
+      "recall": 1.0
+    },
+    "charging_attack": {
+      "windows": 41,
+      "detected": 41,
+      "recall": 1.0
+    }
+  },
+  "false_positive_rate": 0.0,
+  "charging": {
+    "flagged": 16,
+    "total": 60
+  }
+}

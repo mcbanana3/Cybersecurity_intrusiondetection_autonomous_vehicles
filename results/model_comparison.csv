@@ -1,0 +1,7 @@
+model,task,accuracy,f1_macro
+LogisticRegression,binary,1.0,1.0
+DecisionTree,binary,0.9896,0.9884
+RandomForest,binary,0.9896,0.9884
+XGBoost,binary,0.9896,0.9884
+RandomForest,multiclass,0.9896,0.983
+XGBoost,multiclass,0.9688,0.9258
