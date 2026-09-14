@@ -271,16 +271,6 @@ tara:
       base_feasibility: 3
       recommended_action: "Reject false telemetry; secure charging session (encryption)"
 
-# ------------------------------------------------------------------
-# Security controls (Phase 7). All keys here are DEMO/TEST secrets for
-# a software simulation ONLY -- never real automotive key material.
-#
-#   hmac_key_hex   : shared secret for HMAC-SHA256 message auth
-#   aes_key_hex    : 32-byte (256-bit) key for AES-256-GCM (hex = 64 chars)
-#   diag_secret    : shared secret for the seed-key diagnostic challenge
-#   max_diag_attempts : lockout threshold for diagnostic access
-#   plausibility   : accepted physical ranges for runtime tamper checks
-# ------------------------------------------------------------------
 security:
   hmac_key_hex: "0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff0"
   aes_key_hex: "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4"
@@ -291,6 +281,37 @@ security:
     battery_soc: { min: 0.0, max: 100.0 }
     pack_voltage_v: { min: 300.0, max: 450.0 }
     grid_frequency_hz: { min: 49.0, max: 51.0 }
+
+# ------------------------------------------------------------------
+# EV charging/grid session model (Phase 8).
+#
+#   duration_s        : length of a charging session (seconds, 1 Hz)
+#   target_soc        : SOC at which charging tapers/stops
+#   start_soc         : SOC at plug-in
+#   station_voltage_v : nominal DC charging voltage
+#   max_current_a     : maximum charge current
+#   grid_base_load_mw : baseline grid load (MW) without this station
+#   grid_sensitivity  : Hz change per MW of load imbalance (small)
+#   attack:
+#     false_freq_hz     : injected fake grid frequency (false-data attack)
+#     false_current_a   : injected fake current
+#     osc_amplitude_mw  : oscillating-load swing amplitude (MW)
+#     start_s / end_s   : attack window within the session
+# ------------------------------------------------------------------
+charging_session:
+  duration_s: 60
+  start_soc: 40.0
+  target_soc: 90.0
+  station_voltage_v: 400.0
+  max_current_a: 120.0
+  grid_base_load_mw: 500.0
+  grid_sensitivity: 0.002
+  attack:
+    false_freq_hz: 47.0
+    false_current_a: 300.0
+    osc_amplitude_mw: 40.0
+    start_s: 25
+    end_s: 40
 
 logging:
   level: "INFO"

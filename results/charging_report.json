@@ -1,0 +1,778 @@
+{
+  "normal_grid_freq_mean": 50.001758333333335,
+  "attacked_grid_freq_mean": 49.19889666666667,
+  "attacked_grid_freq_min": 46.5019,
+  "samples_total": 60,
+  "samples_flagged": 16,
+  "secure_channel_ok": true,
+  "verdicts": [
+    {
+      "t_s": 0,
+      "grid_frequency_hz": 49.9966,
+      "current_a": 87.2,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 1,
+      "grid_frequency_hz": 49.9819,
+      "current_a": 85.603,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 2,
+      "grid_frequency_hz": 50.007,
+      "current_a": 83.171,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 3,
+      "grid_frequency_hz": 49.9928,
+      "current_a": 82.906,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 4,
+      "grid_frequency_hz": 50.0043,
+      "current_a": 82.796,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 5,
+      "grid_frequency_hz": 50.0065,
+      "current_a": 84.477,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 6,
+      "grid_frequency_hz": 49.9781,
+      "current_a": 82.156,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 7,
+      "grid_frequency_hz": 50.0019,
+      "current_a": 80.067,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 8,
+      "grid_frequency_hz": 49.9877,
+      "current_a": 79.121,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 9,
+      "grid_frequency_hz": 50.0004,
+      "current_a": 79.381,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 10,
+      "grid_frequency_hz": 49.9848,
+      "current_a": 81.787,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 11,
+      "grid_frequency_hz": 49.9988,
+      "current_a": 80.46,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 12,
+      "grid_frequency_hz": 50.0086,
+      "current_a": 79.191,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 13,
+      "grid_frequency_hz": 49.998,
+      "current_a": 79.539,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 14,
+      "grid_frequency_hz": 50.0034,
+      "current_a": 79.377,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 15,
+      "grid_frequency_hz": 49.9818,
+      "current_a": 79.496,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 16,
+      "grid_frequency_hz": 50.0071,
+      "current_a": 79.875,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 17,
+      "grid_frequency_hz": 50.0039,
+      "current_a": 78.94,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 18,
+      "grid_frequency_hz": 50.0038,
+      "current_a": 76.39,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 19,
+      "grid_frequency_hz": 49.9972,
+      "current_a": 74.545,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 20,
+      "grid_frequency_hz": 50.0097,
+      "current_a": 73.175,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 21,
+      "grid_frequency_hz": 50.0181,
+      "current_a": 74.44,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 22,
+      "grid_frequency_hz": 49.9968,
+      "current_a": 76.631,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 23,
+      "grid_frequency_hz": 49.9886,
+      "current_a": 73.982,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 24,
+      "grid_frequency_hz": 50.0033,
+      "current_a": 70.424,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 25,
+      "grid_frequency_hz": 47.0,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.000 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 26,
+      "grid_frequency_hz": 47.466,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.466 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 27,
+      "grid_frequency_hz": 47.3377,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.338 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 28,
+      "grid_frequency_hz": 46.7787,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.779 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 29,
+      "grid_frequency_hz": 46.5019,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.502 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 30,
+      "grid_frequency_hz": 46.8603,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.860 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 31,
+      "grid_frequency_hz": 47.3968,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.397 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 32,
+      "grid_frequency_hz": 47.4273,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.427 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 33,
+      "grid_frequency_hz": 46.9128,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.913 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 34,
+      "grid_frequency_hz": 46.5095,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.510 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 35,
+      "grid_frequency_hz": 46.7317,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.732 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 36,
+      "grid_frequency_hz": 47.296,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.296 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 37,
+      "grid_frequency_hz": 47.4828,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.483 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 38,
+      "grid_frequency_hz": 47.0539,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "47.054 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 39,
+      "grid_frequency_hz": 46.5562,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.556 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 40,
+      "grid_frequency_hz": 46.6245,
+      "current_a": 300.0,
+      "tampered": true,
+      "reasons": [
+        "46.624 outside [49.0, 51.0]",
+        "current 300.0A exceeds station max 120.0A"
+      ],
+      "detected_attack": "charging_attack",
+      "affected_asset": "Charging Controller",
+      "risk_score": 12.4,
+      "risk_level": "High",
+      "response_action": "Reject false grid telemetry; secure charging session"
+    },
+    {
+      "t_s": 41,
+      "grid_frequency_hz": 49.9938,
+      "current_a": 47.682,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 42,
+      "grid_frequency_hz": 50.0092,
+      "current_a": 48.607,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 43,
+      "grid_frequency_hz": 50.0165,
+      "current_a": 47.152,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 44,
+      "grid_frequency_hz": 50.0106,
+      "current_a": 44.116,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 45,
+      "grid_frequency_hz": 50.0227,
+      "current_a": 44.197,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 46,
+      "grid_frequency_hz": 49.9821,
+      "current_a": 44.887,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 47,
+      "grid_frequency_hz": 50.0037,
+      "current_a": 43.677,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 48,
+      "grid_frequency_hz": 50.006,
+      "current_a": 43.826,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 49,
+      "grid_frequency_hz": 49.9951,
+      "current_a": 43.372,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 50,
+      "grid_frequency_hz": 49.9878,
+      "current_a": 41.864,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 51,
+      "grid_frequency_hz": 49.9954,
+      "current_a": 44.591,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 52,
+      "grid_frequency_hz": 49.9834,
+      "current_a": 41.25,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 53,
+      "grid_frequency_hz": 49.992,
+      "current_a": 44.337,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 54,
+      "grid_frequency_hz": 50.0192,
+      "current_a": 41.052,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 55,
+      "grid_frequency_hz": 50.0151,
+      "current_a": 42.635,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 56,
+      "grid_frequency_hz": 50.0027,
+      "current_a": 41.773,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 57,
+      "grid_frequency_hz": 50.0052,
+      "current_a": 40.632,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 58,
+      "grid_frequency_hz": 50.0075,
+      "current_a": 40.75,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    },
+    {
+      "t_s": 59,
+      "grid_frequency_hz": 49.9886,
+      "current_a": 42.032,
+      "tampered": false,
+      "reasons": [],
+      "detected_attack": null,
+      "affected_asset": null,
+      "risk_score": null,
+      "risk_level": null,
+      "response_action": null
+    }
+  ]
+}
