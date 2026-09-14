@@ -203,40 +203,24 @@ features:
     val: 0.2
     test: 0.2
 
-# ------------------------------------------------------------------
-# TARA / risk engine (Phase 6), aligned with ISO/SAE 21434 concepts.
-#
-# For each attack type we define:
-#   threat_scenario  : what the attacker achieves
-#   damage_scenario  : the resulting harm
-#   asset            : the primary affected asset (must match assets above)
-#   impact           : S-F-O-P ratings on a 1..5 ordinal scale
-#                      (Safety, Financial, Operational, Privacy)
-#   base_feasibility : baseline attack feasibility 1..5 (before detection)
-#   recommended_action : the security response to recommend
-#
-# Risk = aggregated_impact * feasibility, mapped to a level via matrix.
-# When the IDS actively detects the attack, feasibility is raised by
-# `detected_feasibility_boost` (observed likelihood increases risk).
-# ------------------------------------------------------------------
 tara:
-  severity_scale:            # ordinal label -> numeric score
+  severity_scale:
     Negligible: 1
     Minor: 2
     Moderate: 3
     Major: 4
     Severe: 5
-  impact_weights:            # how S-F-O-P combine into one impact score
+  impact_weights:
     safety: 0.45
     financial: 0.15
     operational: 0.25
     privacy: 0.15
-  detected_feasibility_boost: 1   # add to feasibility when IDS detects it
-  risk_levels:               # risk-value thresholds -> level label
+  detected_feasibility_boost: 1
+  risk_levels:
     Low: 6
     Medium: 12
     High: 18
-    Critical: 25             # anything above High up to 25 = Critical
+    Critical: 25
 
   threats:
     spoofing:
@@ -286,6 +270,27 @@ tara:
       impact: { safety: Moderate, financial: Major, operational: Major, privacy: Negligible }
       base_feasibility: 3
       recommended_action: "Reject false telemetry; secure charging session (encryption)"
+
+# ------------------------------------------------------------------
+# Security controls (Phase 7). All keys here are DEMO/TEST secrets for
+# a software simulation ONLY -- never real automotive key material.
+#
+#   hmac_key_hex   : shared secret for HMAC-SHA256 message auth
+#   aes_key_hex    : 32-byte (256-bit) key for AES-256-GCM (hex = 64 chars)
+#   diag_secret    : shared secret for the seed-key diagnostic challenge
+#   max_diag_attempts : lockout threshold for diagnostic access
+#   plausibility   : accepted physical ranges for runtime tamper checks
+# ------------------------------------------------------------------
+security:
+  hmac_key_hex: "0f1e2d3c4b5a69788796a5b4c3d2e1f00112233445566778899aabbccddeeff0"
+  aes_key_hex: "603deb1015ca71be2b73aef0857d77811f352c073b6108d72d9810a30914dff4"
+  diag_secret: "AEV-DIAG-SHARED-SECRET-2026"
+  max_diag_attempts: 3
+  plausibility:
+    speed_kmh: { min: 0.0, max: 160.0 }
+    battery_soc: { min: 0.0, max: 100.0 }
+    pack_voltage_v: { min: 300.0, max: 450.0 }
+    grid_frequency_hz: { min: 49.0, max: 51.0 }
 
 logging:
   level: "INFO"

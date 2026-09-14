@@ -1,0 +1,1 @@
+"""Simulated security-control subpackage (crypto, auth, OTA, diagnostics)."""
